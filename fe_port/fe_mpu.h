@@ -18,14 +18,22 @@
 #define FASTEMBEDDED_FE_MPU_H_
 
 #include <stdint.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include "inv_mpu.h"
+#include "driver.h"
+
+#define i2c_write   fe_i2c_write
+#define i2c_read    fe_i2c_read
+#define delay_ms    delay_ms
+#define get_ms      get_ms
+
 void fe_mpu_init(void *i2c);
 uint32_t fe_i2c_write(uint8_t addr, uint8_t reg_addr, uint16_t reg_len, uint8_t *data);
 uint32_t fe_i2c_read(uint8_t addr, uint8_t reg_addr, uint16_t reg_len, uint8_t *data);
+
 void get_ms(uint32_t *ms);
 void delay_ms(uint32_t ms);
 int reg_int_cb(struct int_param_s *int_param);

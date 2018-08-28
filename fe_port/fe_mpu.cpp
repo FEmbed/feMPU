@@ -27,20 +27,55 @@ extern "C"
     {
         assert(i2c);
         mpu_i2c = (fastembedded::I2C*)i2c;
+        if (mpu_init(NULL)) {
+            log_e("Could not initialize MPU.");
+        }
+        // Wake up all sensors.
+#ifdef AK89xx_SECONDARY
+        if(mpu_set_sensors(INV_XYZ_GYRO | INV_XYZ_ACCEL | INV_XYZ_COMPASS))
+#else
+        if(mpu_set_sensors(INV_XYZ_GYRO | INV_XYZ_ACCEL))
+#endif
+        {
+            log_e("mpu set sensors failed.");
+        }
+        // Push both gyro and accel data into the FIFO.
+        if(mpu_configure_fifo(INV_XYZ_GYRO | INV_XYZ_ACCEL))
+        {
+            log_e("mpu configure fifo failed.");
+        }
+        if(mpu_set_sample_rate(20))
+        {
+            log_e("mpu set sample rate failed.");
+        }
+#ifdef AK89xx_SECONDARY
+        // The compass sampling rate can be less than the gyro/accel sampling rate.
+        // Use this function for proper power management.
+        if(mpu_set_compass_sample_rate(10))
+        {
+            log_e("mpu set compass sample rate failed.");
+        }
+#endif
     }
 
     uint32_t fe_i2c_write(uint8_t addr, uint8_t reg_addr, uint16_t reg_len, uint8_t *data)
     {
+        int ret = 0;
         if(mpu_i2c)
-            return mpu_i2c->writeMem(addr, (uint32_t)reg_addr, fastembedded::I2CMEMAddr8Bit, data, reg_len);
-        return 0;
+            ret = mpu_i2c->writeMem(addr, (uint32_t)reg_addr, fastembedded::I2CMEMAddr8Bit, data, reg_len);
+        if(ret == reg_len)
+            return 0;
+        return 1;
     }
 
     uint32_t fe_i2c_read(uint8_t addr, uint8_t reg_addr, uint16_t reg_len, uint8_t *data)
     {
+        int ret = 0;
         if(mpu_i2c)
-            return mpu_i2c->readMem(addr, (uint32_t)reg_addr, fastembedded::I2CMEMAddr8Bit, data, reg_len);
-        return 0;
+            ret = mpu_i2c->readMem(addr, (uint32_t)reg_addr, fastembedded::I2CMEMAddr8Bit, data, reg_len);
+        if(ret == reg_len)
+            return 0;
+        return 1;
     }
 
     void get_ms(uint32_t *ms)
