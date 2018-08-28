@@ -1,0 +1,15 @@
+name: feMPU
+type: src
+files:
+    includes:
+        feMPU:
+        - src
+        - fe_port
+    sources:
+        feMPU:
+        - src
+        - fe_port
+required:
+    feCMSIS:
+    feHAL:
+    feDriver:

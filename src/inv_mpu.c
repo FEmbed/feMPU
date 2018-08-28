@@ -101,6 +101,13 @@ static inline int reg_int_cb(struct int_param_s *int_param)
 /* UC3 is a 32-bit processor, so abs and labs are equivalent. */
 #define labs        abs
 #define fabs(x)     (((x)>0)?(x):-(x))
+#elif defined MOTION_DRIVER_TARGET_FASTEMBEDDED
+#include "fe_mpu.h"
+
+/* labs is already defined by TI's toolchain. */
+/* fabs is for doubles. fabsf is for floats. */
+#define fabs        fabsf
+#define min(a,b) ((a<b)?a:b)
 #else
 #error  Gyro driver is missing the system layer implementations.
 #endif

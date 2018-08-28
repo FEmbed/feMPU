@@ -61,6 +61,8 @@
 #define get_ms  uc3l0_get_clock_ms
 #define log_i       MPL_LOGI
 #define log_e       MPL_LOGE
+#elif defined MOTION_DRIVER_TARGET_FASTEMBEDDED
+#include "fe_mpu.h"
 
 #else
 #error  Gyro driver is missing the system layer implementations.
