@@ -1,14 +1,20 @@
 name: feMPU
 type: src
+common:
+    macros:
+    - MOTION_DRIVER_TARGET_FASTEMBEDDED
 files:
     includes:
         feMPU:
         - src
-        - fe_port
     sources:
         feMPU:
         - src
-        - fe_port
+portable:
+    config:
+    - fe_port/fe_mpu.h
+    port:
+    - fe_port/fe_mpu.cpp
 required:
     feCMSIS:
     feHAL:
